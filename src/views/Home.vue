@@ -1,16 +1,18 @@
 <template>
-  <div class="aiyou-topology"></div>
+  <div class="aiyou-editor">
+    <editor></editor>
+  </div>
 </template>
 
 <script>
 // @ is an alias to /src
 
-import Topology from "@/components/Topology.vue";
+import Editor from "@/components/Editor";
 
 export default {
   name: "Home",
   components: {
-    Topology
+    Editor
   }
 };
 </script>
