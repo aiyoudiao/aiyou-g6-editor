@@ -1,5 +1,10 @@
 # G6 关系图编辑器
 
+## 技术栈
+
+- Vue all
+- viser-graph-vue  @antv/g6
+
 ## 前端设计
 
 大概想做的是这么一个东西：
