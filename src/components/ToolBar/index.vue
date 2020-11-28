@@ -88,7 +88,9 @@ export default {
   name: "ToolBar",
   props: {},
   data() {
-    return {};
+    return {
+      show: true
+    };
   },
   computed: {},
   watch: {},
@@ -106,13 +108,21 @@ export default {
   width: 100%;
   height: 54px;
   background-color: #fff;
-  border-top: 3px solid #e9e9e9;
-  border-bottom: 3px solid #e9e9e9;
+  // border-top: 3px solid #e9e9e9;
+  // border-bottom: 3px solid #e9e9e9;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0px 8px 12px 0px rgba(0, 52, 107, 0.04);
+  // box-shadow: 0px 8px 12px 0px rgba(0, 52, 107, 0.04);
+
+  /* 新增的部分样式 */
+  position: relative;
+  z-index: 11;
+  -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+  transition: all 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+
   /* 工具条 */
   .toolbar {
     margin-left: 20px;

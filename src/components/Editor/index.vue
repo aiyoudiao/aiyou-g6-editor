@@ -2,7 +2,24 @@
   <div class="editor">
     <div class="top-container">
       <!-- <ToolBar></ToolBar> -->
-      <tool-bar></tool-bar>
+      <transition
+        name="animated"
+        enter-active-class="animate__animated animate__fadeInDown"
+        :duration="{ enter: 1000, leave: 1000 }"
+      >
+        <!-- <transition
+        name="animated"
+        enter-active-class="animate__animated animate__fadeInDown"
+        leave-active-class="animate__animated animate__fadeOutUp"
+        leave-active-class="animate__animated animate__zoomOutDown"
+        :duration="{ enter: 1000, leave: 800 }"
+      > -->
+        <tool-bar
+          :style="{ height: show ? '54px' : '0px', opacity: show ? 1 : 0 }"
+          v-show="show"
+        ></tool-bar>
+      </transition>
+      <i class="gb-toggle-btn" @click="handleBtnClick"></i>
     </div>
     <div class="middle-container">
       <div class="left-panel">
@@ -62,7 +79,8 @@ export default {
       multiColor: null, // 多选模式下的color，仅以最后一个为代表颜色
       isMultiSelect: false, // 是否是多选模式
       gridCheck: false,
-      zoomRatio: 100
+      zoomRatio: 100,
+      show: true
     };
   },
   mounted() {
@@ -89,7 +107,10 @@ export default {
     /**
      * @description: 保存流图数据
      */
-    saveFlow() {}
+    saveFlow() {},
+    handleBtnClick() {
+      this.show = !this.show;
+    }
   }
 };
 </script>
@@ -101,7 +122,27 @@ export default {
   display: flex;
   flex-direction: column;
   .top-container {
-    flex: 1;
+    flex: 0;
+    position: relative;
+
+    /* 收缩的按钮 */
+    .gb-toggle-btn {
+      position: absolute;
+      background: #fff;
+      cursor: pointer;
+
+      width: 20px;
+      height: 10px;
+      top: 100%;
+      left: 50%;
+      -webkit-border-radius: 0 0 10px 10px;
+      border-radius: 0 0 10px 10px;
+      -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+      -webkit-transform: translate(-50%, 0);
+      -ms-transform: translate(-50%, 0);
+      transform: translate(-50%, 0);
+    }
   }
   .middle-container {
     flex: 20;
