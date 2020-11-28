@@ -82,6 +82,7 @@ export default {
 <style lang="scss" scoped>
 .leftpel-wrapper {
   width: 340px;
+  transition: all 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   background-color: #fff;
   border: 2px solid #e9e9e9;
   // padding: 20px;

@@ -163,10 +163,13 @@ export default {
 
 <style lang="scss" scoped>
 .rightpel-wrapper {
-  width: 100%;
+  width: 15%;
+  min-width: 300px;
   height: 100%;
   display: inline-flex;
   flex-direction: column;
+  transition: all 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+
   .detail-panel {
     width: 100%;
     height: 65%;

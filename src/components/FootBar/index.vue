@@ -23,7 +23,8 @@ export default {
 
 <style lang="scss" scoped>
 .foot-bar {
-  height: 100%;
+  transition: all 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  height: 50px;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -4,8 +4,9 @@
       <!-- <ToolBar></ToolBar> -->
       <transition
         name="animated"
-        enter-active-class="animate__animated animate__fadeInDown"
-        :duration="{ enter: 1000, leave: 1000 }"
+        enter-active-class="animate__animated animate__shakeY"
+        leave-active-class="animate__animated animate__zoomOut"
+        :duration="{ enter: 150, leave: 1000 }"
       >
         <!-- <transition
         name="animated"
@@ -14,26 +15,72 @@
         leave-active-class="animate__animated animate__zoomOutDown"
         :duration="{ enter: 1000, leave: 800 }"
       > -->
-        <tool-bar
-          :style="{ height: show ? '54px' : '0px', opacity: show ? 1 : 0 }"
-          v-show="show"
-        ></tool-bar>
+        <ToolBar
+          :style="{
+            height: show.top ? '54px' : '0px',
+            opacity: show.top ? 1 : 0
+          }"
+          v-show="show.top"
+        >
+        </ToolBar>
       </transition>
-      <i class="gb-toggle-btn" @click="handleBtnClick"></i>
+      <i class="gb-toggle-btn top" @click="handleBtnClick('top')"></i>
     </div>
     <div class="middle-container">
       <div class="left-panel">
-        <LeftPanel></LeftPanel>
+        <transition
+          name="animated"
+          enter-active-class="animate__animated animate__zoomIn"
+          leave-active-class="animate__animated animate__zoomOut"
+          :duration="{ enter: 1000, leave: 150 }"
+        >
+          <LeftPanel
+            :style="{
+              width: show.left ? '342px' : '0px',
+              opacity: show.left ? 1 : 0
+            }"
+            v-show="show.left"
+          ></LeftPanel>
+        </transition>
+        <i class="gb-toggle-btn left" @click="handleBtnClick('left')"></i>
       </div>
       <div class="center-panel">
         <CenterPanel></CenterPanel>
       </div>
       <div class="right-panel">
-        <RightPanel></RightPanel>
+        <transition
+          name="animated"
+          enter-active-class="animate__animated animate__zoomIn"
+          leave-active-class="animate__animated animate__zoomOut"
+          :duration="{ enter: 1000, leave: 150 }"
+        >
+          <RightPanel
+            :style="{
+              width: show.right ? '300px' : '0px',
+              opacity: show.right ? 1 : 0
+            }"
+            v-show="show.right"
+          ></RightPanel>
+        </transition>
+        <i class="gb-toggle-btn right" @click="handleBtnClick('right')"></i>
       </div>
     </div>
     <div class="bottom-container">
-      <foot-bar></foot-bar>
+      <transition
+        name="animated"
+        enter-active-class="animate__animated animate__bounceIn"
+        leave-active-class="animate__animated animate__fadeOutDownBig"
+        :duration="{ enter: 1000, leave: 150 }"
+      >
+        <FootBar
+          :style="{
+            height: show.bottom ? '50px' : '0px',
+            opacity: show.bottom ? 1 : 0
+          }"
+          v-show="show.bottom"
+        ></FootBar>
+      </transition>
+      <i class="gb-toggle-btn bottom" @click="handleBtnClick('bottom')"></i>
     </div>
   </div>
 </template>
@@ -80,7 +127,13 @@ export default {
       isMultiSelect: false, // 是否是多选模式
       gridCheck: false,
       zoomRatio: 100,
-      show: true
+
+      show: {
+        top: true,
+        left: true,
+        bottom: true,
+        right: true
+      }
     };
   },
   mounted() {
@@ -108,86 +161,98 @@ export default {
      * @description: 保存流图数据
      */
     saveFlow() {},
-    handleBtnClick() {
-      this.show = !this.show;
+    handleBtnClick(position) {
+      this.show[position] = !this.show[position];
     }
   }
 };
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
 .editor {
   width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+
+  /* 收缩的按钮 */
+  .gb-toggle-btn {
+    position: absolute;
+    background: #fff;
+    cursor: pointer;
+    z-index: 1;
+
+    /* 向下的半圆 */
+    &.top {
+      width: 20px;
+      height: 10px;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
+      transform: translate(-50%, 0);
+      top: 100%;
+      left: 50%;
+    }
+
+    /* 向右的半圆 */
+    &.left {
+      width: 10px;
+      height: 20px;
+      border-radius: 0 10px 10px 0;
+      box-shadow: 2px 0px 2px 0 rgba(0, 0, 0, 0.1);
+      transform: translate(0, -50%);
+      top: 50%;
+      left: 100%;
+    }
+    /* 向左的半圆 */
+    &.right {
+      width: 10px;
+      height: 20px;
+      border-radius: 10px 0 0 10px;
+      box-shadow: -2px 0px 2px 0 rgba(0, 0, 0, 0.1);
+      transform: translate(0, -50%);
+      top: 50%;
+      left: -10px;
+    }
+
+    /* 向上的半圆 */
+    &.bottom {
+      width: 20px;
+      height: 10px;
+      border-radius: 10px 10px 0 0;
+      box-shadow: 0 -2px 2px 0 rgba(0, 0, 0, 0.1);
+      transform: translate(-50%, 0);
+      top: -10px;
+      left: 50%;
+    }
+  }
+
   .top-container {
     flex: 0;
     position: relative;
+  }
 
-    /* 收缩的按钮 */
-    .gb-toggle-btn {
-      position: absolute;
-      background: #fff;
-      cursor: pointer;
+  .left-panel {
+    position: relative;
+  }
 
-      width: 20px;
-      height: 10px;
-      top: 100%;
-      left: 50%;
-      -webkit-border-radius: 0 0 10px 10px;
-      border-radius: 0 0 10px 10px;
-      -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
-      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1);
-      -webkit-transform: translate(-50%, 0);
-      -ms-transform: translate(-50%, 0);
-      transform: translate(-50%, 0);
-    }
+  .right-panel {
+    position: relative;
+  }
+
+  .center-panel {
+    position: relative;
   }
   .middle-container {
     flex: 20;
   }
   .bottom-container {
-    flex: 1;
     background: mediumpurple;
+
+    position: relative;
   }
 
-  // .top-container {
-  //   position: absolute;
-  //   padding: 5px 20px;
-  //   width: 100%;
-  //   border: 1px solid #e9e9e9;
-  //   height: 42px;
-  //   display: flex;
-  //   justify-content: space-between;
-  //   align-items: center;
-  //   background: #ffffff;
-  //   box-shadow: 0px 8px 12px 0px rgba(0, 52, 107, 0.04);
-  //   .toolbar {
-  //     // height: 100%;
-  //     line-height: 42px;
-  //     width: 80%;
-  //     .command {
-  //       width: 27px;
-  //       height: 27px;
-  //       margin: 0px 6px;
-  //       border-radius: 2px;
-  //       padding-left: 4px;
-  //       display: inline-block;
-  //       border: 1px solid rgba(2, 2, 2, 0);
-  //     }
-  //     .disable {
-  //       color: rgba(0, 0, 0, 0.25);
-  //     }
-  //   }
-  //   .data-opt {
-  //     width: 20%;
-  //     height: 100%;
-  //     text-align: right;
-  //   }
-  // }
   .middle-container {
-    // padding-top: 54px;
     width: 100%;
     height: calc(100vh - 120px);
     display: flex;
@@ -203,73 +268,12 @@ export default {
       padding: 0 20px;
       background: #cfd4d9;
     }
-    // .left-panel {
-    //   width: 15%;
-    //   min-width: 300px;
-    //   height: 100%;
-    //   padding: 20px;
-    //   display: inline-flex;
-    //   flex-direction: column;
-    //   align-items: center;
-    //   .itempanel-container {
-    //     width: 199px;
-    //     height: 192px;
-    //     img {
-    //       width: 92px;
-    //       height: 96px;
-    //       padding: 4px;
-    //       margin-left: 4px;
-    //       border-radius: 2px;
-    //       border: 1px solid rgba(0, 0, 0, 0);
-    //       vertical-align: middle;
-    //       cursor: pointer;
-    //     }
-    //   }
-    // }
     .center-panel {
       background: #ffffff;
       display: inline-block;
       width: 100%;
       height: 100%;
       border: 1px solid #dedbe2;
-    }
-    // .center-panel {
-    //   background: #ffffff;
-    //   display: inline-block;
-    //   width: 70%;
-    //   height: 100%;
-    //   border: 1px solid #dedbe2;
-    //   .flow {
-    //     width: 100%;
-    //     height: 100%;
-    //     overflow: hidden;
-    //   }
-    //   .contextmenu {
-    //     margin: 0px;
-    //     width: 200px;
-    //     background: white;
-    //     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
-    //     color: #000;
-    //     font-size: 12px;
-    //     display: none;
-    //     .command {
-    //       height: 12px;
-    //       padding: 8px;
-    //       box-sizing: content-box;
-    //     }
-    //     .command:hover {
-    //       cursor: pointer;
-    //       background: #e6f7ff;
-    //     }
-    //     .disable {
-    //       color: rgba(0, 0, 0, 0.25);
-    //     }
-    //   }
-    // }
-    .right-panel {
-      width: 15%;
-      min-width: 300px;
-      height: 100%;
     }
   }
 }
