@@ -1,10 +1,5 @@
 <template>
-  <div
-    class="centerpel-wrapper"
-    @dragenter="handleDragenter"
-    @dragover="handleDragover"
-    @drop="handleDrop"
-  >
+  <div class="centerpel-wrapper">
     <div class="canvas" ref="canvas" v-if="Object.keys(data).length">
       <v-graph
         ref="graph"
@@ -93,7 +88,6 @@
 <script>
 import originData from "@/assets/data/FeHelper-20201112134758.json";
 import { listenCanvasResize } from "@/utils/graph.js";
-import { generateUUID } from "@/utils/tools.js";
 
 const graph = {
   container: "mount",
@@ -145,7 +139,6 @@ const edge = {
 };
 
 const refreshDragedNodePosition = e => {
-  console.log("e", e);
   const model = e.item.get("model");
   model.fx = e.x;
   model.fy = e.y;
@@ -182,70 +175,9 @@ export default {
     console.log(this.data);
     listenCanvasResize(this, "graph", ".centerpel-wrapper");
     // });
-
-    const container = document.querySelector("#center-container");
-
-    container;
   },
   components: {},
-  methods: {
-    handleDragenter(event) {
-      if (event.preventDefault) {
-        event.preventDefault();
-      } else {
-        return false;
-      }
-    },
-    handleDragover(event) {
-      if (event.preventDefault) {
-        event.preventDefault();
-      } else {
-        return false;
-      }
-    },
-    handleDrop(event) {
-      const nodeContent = event.dataTransfer.getData("content");
-
-      const node = JSON.parse(nodeContent);
-      const clientX = event.clientX;
-      const clientY = event.clientY;
-      this.addNode(clientX, clientY, node);
-    },
-    addNode(clientX, clientY, node) {
-      const graph = this.$refs.graph.chart.graph;
-      if (graph && !graph.destroyed) {
-        // 开始添加
-        const droppoint = graph.getPointByClient(clientX, clientY);
-        const obj = {
-          id: generateUUID(),
-          x: droppoint.x,
-          y: droppoint.y,
-          label: node.dataLabel,
-          labelCfg: {
-            position: "bottom"
-          },
-          type: node.dataType,
-          img: node.src,
-          size: [node.width, node.height],
-          width: node.width,
-          height: node.height,
-          anchorPoints: [
-            [0.5, 0], // top
-            [1, 0.5], // right
-            [0.5, 1], // bottom
-            [0, 0.5] // left
-          ]
-        };
-        // this.data.nodes.push(obj);
-        const nodeObj = graph.addItem("node", obj);
-        // this.$nextTick(() => {
-        //   this.$refs.graph.freshChart(false);
-        // });
-
-        console.log(nodeObj);
-      }
-    }
-  }
+  methods: {}
 };
 </script>
 
