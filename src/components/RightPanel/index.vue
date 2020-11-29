@@ -92,7 +92,7 @@
     <!-- 导航器 -->
     <div class="navigator">
       <span class="panel-title">导航器</span>
-      <div class="mini-map" ref="minimap"></div>
+      <div class="mini-map" id="mini-map" ref="minimap"></div>
     </div>
     <!-- 缩放条 -->
     <div class="zoom-slider">

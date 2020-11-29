@@ -173,7 +173,7 @@ export default {
     };
     this.data = data;
     console.log(this.data);
-    listenCanvasResize(this, "graph", ".centerpel-wrapper");
+    listenCanvasResize(window, "graph", ".centerpel-wrapper");
     // });
   },
   components: {},

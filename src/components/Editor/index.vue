@@ -44,7 +44,7 @@
         </transition>
         <i class="gb-toggle-btn left" @click="handleBtnClick('left')"></i>
       </div>
-      <div class="center-panel">
+      <div class="center-panel" :style="{width: centerWidth}">
         <CenterPanel></CenterPanel>
       </div>
       <div class="right-panel">
@@ -93,6 +93,7 @@ import LeftPanel from "../LeftPanel";
 import CenterPanel from "../CenterPanel";
 import RightPanel from "../RightPanel";
 import FootBar from "../FootBar";
+import { resizeCanvas } from "@/utils/graph.js";
 
 export default {
   name: "BaseFlow",
@@ -106,6 +107,25 @@ export default {
     CenterPanel,
     RightPanel,
     FootBar
+  },
+  computed: {
+    /* 动态计算中心画布的宽度 */
+    centerWidth () {
+      let str = '100vw'
+
+      if (this.show.left && this.show.right) {
+        str = `calc(100vw - 340px - 300px)`
+      }
+      else if (this.show.left) {
+        str = 'calc(100vw - 340px)'
+      } else if (this.show.right) {
+        str = 'calc(100vw - 300px)'
+      } else {
+        str = 'calc(100vw)'
+      }
+
+      return str
+    }
   },
   data() {
     return {
@@ -163,6 +183,7 @@ export default {
     saveFlow() {},
     handleBtnClick(position) {
       this.show[position] = !this.show[position];
+      resizeCanvas()
     }
   }
 };
@@ -242,6 +263,7 @@ export default {
 
   .center-panel {
     position: relative;
+    z-index: 0;
   }
   .middle-container {
     flex: 20;
@@ -257,7 +279,8 @@ export default {
     height: calc(100vh - 120px);
     display: flex;
     background: #f7f9fb;
-    justify-content: space-around;
+    // justify-content: space-around;
+    justify-content: space-between;
     .title {
       display: flex;
       width: 100%;

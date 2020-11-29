@@ -1,23 +1,12 @@
 <template>
   <div
     class="centerpel-wrapper"
+    id="centerpel-wrapper"
     @dragenter="handleDragenter"
     @dragover="handleDragover"
     @drop="handleDrop"
   >
-    <div class="canvas" ref="canvas" v-if="Object.keys(data).length">
-      <v-graph
-        ref="graph"
-        :data="data"
-        :width="graph.width"
-        :height="graph.height"
-        :layout="graph.layout"
-        :modes="graph.modes"
-        :defaultNode="graph.defaultNode"
-        :defaultEdge="graph.defaultEdge"
-      >
-        <v-node :events="node.events"></v-node>
-      </v-graph>
+    <div class="canvas" ref="canvas" id="canvas">
     </div>
     <div
       class="contextmenu"
@@ -91,12 +80,15 @@
 </template>
 
 <script>
+/* eslint-disable */
+
 import originData from "@/assets/data/FeHelper-20201112134758.json";
 import { listenCanvasResize } from "@/utils/graph.js";
 import { generateUUID } from "@/utils/tools.js";
+import G6 from "@antv/g6";
 
 const graph = {
-  container: "mount",
+  container: "center-container",
   type: "graph",
   width: 600,
   height: 500,
@@ -108,16 +100,16 @@ const graph = {
     color: "#5B8FF9",
     style: {
       lineWidth: 1,
-      fill: "#C6E5FF"
-    }
+      fill: "#C6E5FF",
+    },
   },
   defaultEdge: {
     size: 1,
-    color: "#e2e2e2"
+    color: "#e2e2e2",
   },
   layout: {
-    type: "force"
-  }
+    type: "force",
+  },
 };
 const node = {
   events: {
@@ -125,26 +117,26 @@ const node = {
       graph.layout();
       refreshDragedNodePosition(e);
     },
-    onDrag: e => {
+    onDrag: (e) => {
       refreshDragedNodePosition(e);
     },
-    onDragend: e => {
+    onDragend: (e) => {
       e.item.get("model").fx = null;
       e.item.get("model").fy = null;
-    }
-  }
+    },
+  },
 };
 
 const edge = {
   formatter: () => {
     return {
       shape: "cubic-horizontal",
-      color: "#e2e2e2"
+      color: "#e2e2e2",
     };
-  }
+  },
 };
 
-const refreshDragedNodePosition = e => {
+const refreshDragedNodePosition = (e) => {
   console.log("e", e);
   const model = e.item.get("model");
   model.fx = e.x;
@@ -155,37 +147,65 @@ export default {
   name: "",
   props: {},
   data() {
-    return {
-      data: {},
-      graph,
-      node,
-      edge
-    };
+    return {};
   },
   computed: {},
   watch: {},
   created() {},
-  beforeCreate() {},
+  beforeCreate() {
+
+  },
   mounted() {
-    // fetch("https://viserjs.gitee.io/assets/data/forceDirectedLayout.json")
-    //   .then(result => result.json())
-    //   .then(oriData => {
+    
     console.log("originData:", originData);
     const oriData = originData;
     const data = {
       nodes: oriData.nodes,
       edges: oriData.edges.map(function(edge, i) {
         return { ...edge, id: "edge" + i };
-      })
+      }),
     };
-    this.data = data;
-    console.log(this.data);
-    listenCanvasResize(this, "graph", ".centerpel-wrapper");
-    // });
 
-    const container = document.querySelector("#center-container");
+    const grid = new G6.Grid();
+    const minimap = new G6.Minimap({
+      container: "mini-map",
+    });
+    const graph = new G6.Graph({
+      container: "canvas",
+      plugins: [grid, minimap],
+      type: "graph",
+      width: 600,
+      height: 500,
+      pixelRatio: 2,
+      renderer: "canvas",
+      fitView: true,
+      defaultNode: {
+        size: 15,
+        color: "#5B8FF9",
+        style: {
+          lineWidth: 1,
+          fill: "#C6E5FF",
+        },
+      },
+      defaultEdge: {
+        size: 1,
+        color: "#e2e2e2",
+      },
+      layout: {
+        type: "force",
+      },
+      modes: {
+        default: ["zoom-canvas", "drag-canvas"],
+      },
+    });
 
-    container;
+    window.data = data;
+    window.graph = graph;
+
+    graph.read(data);
+    graph.render();
+    listenCanvasResize(window, ".centerpel-wrapper");
+
   },
   components: {},
   methods: {
@@ -212,7 +232,7 @@ export default {
       this.addNode(clientX, clientY, node);
     },
     addNode(clientX, clientY, node) {
-      const graph = this.$refs.graph.chart.graph;
+      const graph = window.graph;
       if (graph && !graph.destroyed) {
         // 开始添加
         const droppoint = graph.getPointByClient(clientX, clientY);
@@ -222,7 +242,7 @@ export default {
           y: droppoint.y,
           label: node.dataLabel,
           labelCfg: {
-            position: "bottom"
+            position: "bottom",
           },
           type: node.dataType,
           img: node.src,
@@ -230,22 +250,18 @@ export default {
           width: node.width,
           height: node.height,
           anchorPoints: [
-            [0.5, 0], // top
+            [0.5, 0], // topobj
             [1, 0.5], // right
             [0.5, 1], // bottom
-            [0, 0.5] // left
-          ]
+            [0, 0.5], // left
+          ],
         };
-        // this.data.nodes.push(obj);
-        const nodeObj = graph.addItem("node", obj);
-        // this.$nextTick(() => {
-        //   this.$refs.graph.freshChart(false);
-        // });
 
-        console.log(nodeObj);
+        console.log('graph', graph)
+        const nodeObj = graph.addItem("node", obj);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
