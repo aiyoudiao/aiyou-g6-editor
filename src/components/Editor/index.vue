@@ -18,7 +18,7 @@
         <ToolBar
           :style="{
             height: show.top ? '54px' : '0px',
-            opacity: show.top ? 1 : 0
+            opacity: show.top ? 1 : 0,
           }"
           v-show="show.top"
         >
@@ -37,14 +37,14 @@
           <LeftPanel
             :style="{
               width: show.left ? '342px' : '0px',
-              opacity: show.left ? 1 : 0
+              opacity: show.left ? 1 : 0,
             }"
             v-show="show.left"
           ></LeftPanel>
         </transition>
         <i class="gb-toggle-btn left" @click="handleBtnClick('left')"></i>
       </div>
-      <div class="center-panel" :style="{width: centerWidth}">
+      <div class="center-panel" :style="{ width: centerWidth }">
         <CenterPanel></CenterPanel>
       </div>
       <div class="right-panel">
@@ -57,7 +57,7 @@
           <RightPanel
             :style="{
               width: show.right ? '300px' : '0px',
-              opacity: show.right ? 1 : 0
+              opacity: show.right ? 1 : 0,
             }"
             v-show="show.right"
           ></RightPanel>
@@ -75,7 +75,7 @@
         <FootBar
           :style="{
             height: show.bottom ? '50px' : '0px',
-            opacity: show.bottom ? 1 : 0
+            opacity: show.bottom ? 1 : 0,
           }"
           v-show="show.bottom"
         ></FootBar>
@@ -93,39 +93,43 @@ import LeftPanel from "../LeftPanel";
 import CenterPanel from "../CenterPanel";
 import RightPanel from "../RightPanel";
 import FootBar from "../FootBar";
-import { resizeCanvas } from "@/utils/graph.js";
+import { resizeCanvas, listenCanvasResize } from "@/utils/graph.js";
+import originData from "@/assets/data/FeHelper-20201112134758.json";
+import G6 from "@antv/g6";
+
+/* 注册所有插件：自定义节点、边、行为 */
+import "../../g6-common/plugins";
 
 export default {
   name: "BaseFlow",
   props: {
     data: Object, // 传入数据
-    getData: Function // 获取数据
+    getData: Function, // 获取数据
   },
   components: {
     ToolBar,
     LeftPanel,
     CenterPanel,
     RightPanel,
-    FootBar
+    FootBar,
   },
   computed: {
     /* 动态计算中心画布的宽度 */
-    centerWidth () {
-      let str = '100vw'
+    centerWidth() {
+      let str = "100vw";
 
       if (this.show.left && this.show.right) {
-        str = `calc(100vw - 340px - 300px)`
-      }
-      else if (this.show.left) {
-        str = 'calc(100vw - 340px)'
+        str = `calc(100vw - 340px - 300px)`;
+      } else if (this.show.left) {
+        str = "calc(100vw - 340px)";
       } else if (this.show.right) {
-        str = 'calc(100vw - 300px)'
+        str = "calc(100vw - 300px)";
       } else {
-        str = 'calc(100vw)'
+        str = "calc(100vw)";
       }
 
-      return str
-    }
+      return str;
+    },
   },
   data() {
     return {
@@ -152,8 +156,8 @@ export default {
         top: true,
         left: true,
         bottom: true,
-        right: true
-      }
+        right: true,
+      },
     };
   },
   mounted() {
@@ -169,23 +173,80 @@ export default {
     groupName() {},
     groupColor() {},
     gridCheck() {},
-    zoomRatio() {}
+    zoomRatio() {},
   },
   methods: {
     /**
      * @description: 初始化编辑器
      */
-    initEditor() {},
+    initEditor() {
+      console.log("originData:", originData);
+      const oriData = originData;
+      const data = {
+        nodes: oriData.nodes,
+        edges: oriData.edges.map(function(edge, i) {
+          return { ...edge, id: "edge" + i };
+        }),
+      };
+
+      const grid = new G6.Grid();
+      const minimap = new G6.Minimap({
+        container: "mini-map",
+        size: [
+          document.querySelector("#mini-map").clientWidth,
+          document.querySelector("#mini-map").clientHeight,
+        ],
+      });
+      const graph = new G6.Graph({
+        container: "canvas",
+        plugins: [grid, minimap],
+        type: "graph",
+        width: 600,
+        height: 500,
+        pixelRatio: 2,
+        renderer: "canvas",
+        fitView: true,
+        defaultNode: {
+          size: 15,
+          color: "#5B8FF9",
+          style: {
+            lineWidth: 1,
+            fill: "#C6E5FF",
+          },
+        },
+        defaultEdge: {
+          size: 1,
+          color: "#e2e2e2",
+        },
+        layout: {
+          type: "force",
+        },
+        modes: {
+          default: ["zoom-canvas", "drag-canvas"],
+        },
+      });
+
+      window.data = data;
+      window.graph = graph;
+
+      graph.read(data);
+      graph.render();
+      listenCanvasResize(window, ".centerpel-wrapper");
+    },
 
     /**
      * @description: 保存流图数据
      */
     saveFlow() {},
+
+    /**
+     * @description: 处理收缩按钮的点击事件
+     */
     handleBtnClick(position) {
       this.show[position] = !this.show[position];
-      resizeCanvas()
-    }
-  }
+      resizeCanvas();
+    },
+  },
 };
 </script>
 

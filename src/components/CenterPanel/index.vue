@@ -81,67 +81,8 @@
 
 <script>
 /* eslint-disable */
-
-import originData from "@/assets/data/FeHelper-20201112134758.json";
-import { listenCanvasResize } from "@/utils/graph.js";
 import { generateUUID } from "@/utils/tools.js";
-import G6 from "@antv/g6";
 
-const graph = {
-  container: "center-container",
-  type: "graph",
-  width: 600,
-  height: 500,
-  pixelRatio: 2,
-  renderer: "canvas",
-  fitView: true,
-  defaultNode: {
-    size: 15,
-    color: "#5B8FF9",
-    style: {
-      lineWidth: 1,
-      fill: "#C6E5FF",
-    },
-  },
-  defaultEdge: {
-    size: 1,
-    color: "#e2e2e2",
-  },
-  layout: {
-    type: "force",
-  },
-};
-const node = {
-  events: {
-    onDragstart: (e, graph) => {
-      graph.layout();
-      refreshDragedNodePosition(e);
-    },
-    onDrag: (e) => {
-      refreshDragedNodePosition(e);
-    },
-    onDragend: (e) => {
-      e.item.get("model").fx = null;
-      e.item.get("model").fy = null;
-    },
-  },
-};
-
-const edge = {
-  formatter: () => {
-    return {
-      shape: "cubic-horizontal",
-      color: "#e2e2e2",
-    };
-  },
-};
-
-const refreshDragedNodePosition = (e) => {
-  console.log("e", e);
-  const model = e.item.get("model");
-  model.fx = e.x;
-  model.fy = e.y;
-};
 
 export default {
   name: "",
@@ -156,55 +97,6 @@ export default {
 
   },
   mounted() {
-    
-    console.log("originData:", originData);
-    const oriData = originData;
-    const data = {
-      nodes: oriData.nodes,
-      edges: oriData.edges.map(function(edge, i) {
-        return { ...edge, id: "edge" + i };
-      }),
-    };
-
-    const grid = new G6.Grid();
-    const minimap = new G6.Minimap({
-      container: "mini-map",
-    });
-    const graph = new G6.Graph({
-      container: "canvas",
-      plugins: [grid, minimap],
-      type: "graph",
-      width: 600,
-      height: 500,
-      pixelRatio: 2,
-      renderer: "canvas",
-      fitView: true,
-      defaultNode: {
-        size: 15,
-        color: "#5B8FF9",
-        style: {
-          lineWidth: 1,
-          fill: "#C6E5FF",
-        },
-      },
-      defaultEdge: {
-        size: 1,
-        color: "#e2e2e2",
-      },
-      layout: {
-        type: "force",
-      },
-      modes: {
-        default: ["zoom-canvas", "drag-canvas"],
-      },
-    });
-
-    window.data = data;
-    window.graph = graph;
-
-    graph.read(data);
-    graph.render();
-    listenCanvasResize(window, ".centerpel-wrapper");
 
   },
   components: {},
