@@ -101,8 +101,8 @@ import G6 from "@antv/g6";
 import "../../g6-common/plugins";
 
 /* 引入demo数据 */
-import getData from "../../demo/getData3"
-// import getData from "../../demo/getData4"
+// import getData from "../../demo/getData3"
+import getData from "../../demo/getData4"
 const model = getData()
 
 // console.log('global：', model)
@@ -240,42 +240,14 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
           color: "#e2e2e2",
         },
         layout: {
-          // type: "force",
+          type: "force",
           // type: 'comboForce',
           // nodeSpacing: (d) => 8,
-          type: 'gForce',
-          center: [ 200, 200 ], 
           workerEnabled: true, 
+          // type: 'gForce',
           gpuEnabled: true,
-          maxIteration: 1000,
-          linkDistance: 50,         // 可选，边长
-          nodeStrength: 30,         // 可选
-          edgeStrength: 0.1,        // 可选
-          onTick: () => {           // 可选
-            console.log('ticking');
-          },
-          onLayoutEnd: () => {      // 可选
-            console.log('combo force layout done');
-          }
+          maxIteration: 1000
         },
-
-        groupByTypes: false, // 若希望在带有 combo 的图上，节点、边、combo 的层级符合常规逻辑，需要将 groupByTypes 设置为 false
-        // layout: {
-        //   type: 'comboForce',
-        //   workerEnabled: true, 
-        //   gpuEnabled: true,
-        //   center: [ 200, 200 ],     // 可选，默认为图的中心
-        //   linkDistance: 50,         // 可选，边长
-        //   nodeStrength: 30,         // 可选
-        //   edgeStrength: 0.1,        // 可选
-        //   onTick: () => {           // 可选
-        //     console.log('ticking');
-        //   },
-        //   onLayoutEnd: () => {      // 可选
-        //     console.log('combo force layout done');
-        //   }
-        // },
-
         // layout: {
         //   type: 'fruchterman',
         //    gravity: 10,
@@ -313,12 +285,11 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
       };
 
       graph.on('node:dragstart', e => {
-        // graph.layout()
+        graph.layout()
         refreshDragedNodePosition(e)
       })
       graph.on('node:drag', e => {
-        // raph.layout()
-        // forceLayout.execute()
+        forceLayout.execute()
         refreshDragedNodePosition(e)
       })
       graph.on('node:dragend', e => {
