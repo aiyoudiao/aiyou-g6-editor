@@ -94,15 +94,20 @@ import CenterPanel from "../CenterPanel";
 import RightPanel from "../RightPanel";
 import FootBar from "../FootBar";
 import { resizeCanvas, listenCanvasResize } from "@/utils/graph.js";
+import originData from "@/assets/data/FeHelper-20201112134758.json";
 import G6 from "@antv/g6";
+/* 引入经典布局类 */
+import ForceLayout from "@antv/g6/es/layout/force/force";
 
 /* 注册所有插件：自定义节点、边、行为 */
 import "../../g6-common/plugins";
 
 /* 引入demo数据 */
-import getData from "../../demo/getData6"
-const model = getData()
+import getData from "../../demo/getData3";
+// import getData from "../../demo/getData4"
+const model = getData();
 
+// console.log('global：', model)
 
 export default {
   name: "BaseFlow",
@@ -157,15 +162,17 @@ export default {
       zoomRatio: 100,
 
       show: {
-        top: false,
-        left: false,
-        bottom: false,
-        right: false,
+        top: true,
+        left: true,
+        bottom: true,
+        right: true,
       },
     };
   },
   mounted() {
-    this.initEditor();
+    // this.initDemo1();
+    this.initDemo2();
+    // this.initEditor();
   },
   watch: {
     nodeName() {},
@@ -184,6 +191,8 @@ export default {
      * @description: 初始化编辑器
      */
     initEditor() {
+      console.log("originData:", originData);
+      const oriData = originData;
       // const data = {
       //   nodes: oriData.nodes,
       //   edges: oriData.edges.map(function(edge, i) {
@@ -202,10 +211,8 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
 
 
        */
-      fetch('https://gw.alipayobjects.com/os/bmw-prod/f1565312-d537-4231-adf5-81cb1cd3a0e8.json')
-  .then((res) => res.json())
-  .then((data) => {
-      // const data = model.graphData
+
+      const data = model.graphData;
 
       const grid = new G6.Grid();
       const minimap = new G6.Minimap({
@@ -240,26 +247,28 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
           // type: "force",
           // type: 'comboForce',
           // nodeSpacing: (d) => 8,
-          type: 'gForce',
-          center: [ 200, 200 ], 
-          workerEnabled: true, 
+          type: "gForce",
+          center: [200, 200],
+          workerEnabled: true,
           gpuEnabled: true,
           maxIteration: 1000,
-          linkDistance: 50,         // 可选，边长
-          nodeStrength: 30,         // 可选
-          edgeStrength: 0.1,        // 可选
-          onTick: () => {           // 可选
-            console.log('ticking');
+          linkDistance: 50, // 可选，边长
+          nodeStrength: 30, // 可选
+          edgeStrength: 0.1, // 可选
+          onTick: () => {
+            // 可选
+            console.log("ticking");
           },
-          onLayoutEnd: () => {      // 可选
-            console.log('combo force layout done');
-          }
+          onLayoutEnd: () => {
+            // 可选
+            console.log("combo force layout done");
+          },
         },
 
         groupByTypes: false, // 若希望在带有 combo 的图上，节点、边、combo 的层级符合常规逻辑，需要将 groupByTypes 设置为 false
         // layout: {
         //   type: 'comboForce',
-        //   workerEnabled: true, 
+        //   workerEnabled: true,
         //   gpuEnabled: true,
         //   center: [ 200, 200 ],     // 可选，默认为图的中心
         //   linkDistance: 50,         // 可选，边长
@@ -281,10 +290,10 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
         //   workerEnabled: true,
         //   gpuEnabled: true,
         // },
-        animate: true,
+        // animate: true,
 
         modes: {
-          default: ["zoom-canvas", "drag-canvas",'drag-combo', 'drag-node'],
+          default: ["zoom-canvas", "drag-canvas", "drag-combo", "drag-node"],
         },
       });
 
@@ -295,34 +304,203 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
       graph.render();
       listenCanvasResize(window, ".centerpel-wrapper");
       this.initEvents();
-  })
+    },
+
+    /**
+     * @Description  初始化Demo1，主要用于测试子图布局
+     * @date 2020-12-09
+     * @returns {any}
+     */
+
+    initDemo1() {
+      /**
+       * 1、初始化引入的布局类实例
+       * 2、调用这个实例的init方法，传入初始化数据
+       * 3、调用这个实例的execute方法，对数据进行布局
+       * 4、打印数据，查看它们是否有x、y轴数据
+       */
+      console.log("ForceLayout:", ForceLayout);
+
+      const forceLayout = new ForceLayout();
+      const data = model.graphData;
+      forceLayout.init(data);
+      //  forceLayout.executeWithWorker()
+      forceLayout.execute();
+      console.log("data:", data);
+
+      this.initCommonCanvas(data);
+    },
+    /**
+     * @Description  初始化Demo2，主要用于测试分组后的子图布局
+     * @date 2020-12-09
+     * @returns {any}
+     */
+
+    initDemo2() {
+      /**
+       * 1、对数据进行分堆，`combo的位置和大小是由节点的位置来定义的`
+       * 2、对每堆数据进行分别布局
+       *     1、初始化引入的布局类实例
+       *     2、设置这个布局实例的center中心点坐标
+       *     3、调用这个实例的init方法，传入初始化数据
+       *     4、调用这个实例的execute方法，对数据进行布局
+       * 3、打印数据，查看它们是否有x、y轴数据
+       * 4、初始化数据
+       */
+      const data = model.graphData;
+      const nodes = data.nodes;
+      const edges = data.edges;
+      const combos = data.combos;
+
+      const groups = {};
+      nodes.forEach((node) => {
+        const comboId = node.comboId
+        if (!comboId) {
+          return;
+        }
+
+        if (!groups[comboId]) {
+          groups[comboId] = [];
+        }
+
+        groups[comboId].push(node);
+      });
+
+      console.log('groups ', groups)
+      const nodeGroupKeys = Object.keys(groups);
+
+      const centers = [100, 100];
+      nodeGroupKeys.forEach((key, index) => {
+        const tempData = {
+          nodes: groups[key],
+          edges: [],
+        };
+
+        centers[0] = 1000 * Math.random() + 100 + index;
+        centers[1] = 1000 * Math.random() + 100 + index;
+        // const combo = combos.find(combo => combo.id === key)
+        // if (combo) {
+        //   combo.x = centers[0]
+        //   combo.y = centers[1]
+        // }
+
+        const tempCenter = [
+          centers[0],
+          centers[1]
+        ];
+        const forceLayout = new ForceLayout();
+        forceLayout.updateCfg({
+          center: tempCenter
+        })
+        forceLayout.init(tempData);
+        //  forceLayout.executeWithWorker()
+        forceLayout.execute();
+        forceLayout.destroy(); /* 一定要注意销毁 */
+
+        tempData.nodes.forEach(node => {
+          node.x = node.x + tempCenter[0]
+          node.y = node.y + tempCenter[1]
+        })
+
+        console.log(key,"@tempData:", tempData);
+      });
+
+      this.initCommonCanvas(data);
+    },
+
+    /**
+     * @Description 初始化一个通用的画布
+     * @date 2020-12-09
+     * @param {any} data
+     * @returns {any}
+     */
+
+    initCommonCanvas(data) {
+      const grid = new G6.Grid();
+      const minimap = new G6.Minimap({
+        container: "mini-map",
+        size: [
+          document.querySelector("#mini-map").clientWidth,
+          document.querySelector("#mini-map").clientHeight,
+        ],
+      });
+      const graph = new G6.Graph({
+        container: "canvas",
+        plugins: [grid, minimap],
+        type: "graph",
+        width: 600 * 2,
+        height: 500 * 2,
+        pixelRatio: 2,
+        renderer: "canvas",
+        fitView: true,
+        defaultNode: {
+          size: 15,
+          color: "#5B8FF9",
+          style: {
+            lineWidth: 1,
+            fill: "#C6E5FF",
+          },
+        },
+        defaultEdge: {
+          size: 1,
+          color: "#e2e2e2",
+        },
+        //  layout: {
+        //   type: 'comboForce',
+        //   workerEnabled: true,
+        //   // gpuEnabled: true,
+        //   center: [ 200, 200 ],     // 可选，默认为图的中心
+        //   linkDistance: 50,         // 可选，边长
+        //   nodeStrength: 30,         // 可选
+        //   edgeStrength: 0.1,        // 可选
+        //   onTick: () => {           // 可选
+        //     console.log('ticking');
+        //   },
+        //   onLayoutEnd: () => {      // 可选
+        //     console.log('combo force layout done');
+        //   }
+        // },
+
+        groupByTypes: false, // 若希望在带有 combo 的图上，节点、边、combo 的层级符合常规逻辑，需要将 groupByTypes 设置为 false
+        // animate: true,
+
+        modes: {
+          default: ["zoom-canvas", "drag-canvas", "drag-combo", "drag-node"],
+        },
+      });
+
+      window.data = data;
+      window.graph = graph;
+
+      graph.read(data);
+      graph.render();
     },
 
     /**
      * @description: 初始化事件
      */
-    initEvents () {
-      const graph = window.graph
-      const forceLayout = graph.get('layoutController').layoutMethod;
-      const refreshDragedNodePosition = e => {
+    initEvents() {
+      const graph = window.graph;
+      const forceLayout = graph.get("layoutController").layoutMethod;
+      const refreshDragedNodePosition = (e) => {
         const model = e.item.get("model");
         model.fx = e.x;
         model.fy = e.y;
       };
 
-      graph.on('node:dragstart', e => {
-        graph.layout()
-        refreshDragedNodePosition(e)
-      })
-      graph.on('node:drag', e => {
-        graph.layout()
+      graph.on("node:dragstart", (e) => {
+        // graph.layout()
+        refreshDragedNodePosition(e);
+      });
+      graph.on("node:drag", (e) => {
+        // raph.layout()
         // forceLayout.execute()
-        refreshDragedNodePosition(e)
-      })
-      graph.on('node:dragend', e => {
-        e.item.get('model').fx = null
-        e.item.get('model').fy = null
-      })
+        refreshDragedNodePosition(e);
+      });
+      graph.on("node:dragend", (e) => {
+        e.item.get("model").fx = null;
+        e.item.get("model").fy = null;
+      });
     },
 
     /**

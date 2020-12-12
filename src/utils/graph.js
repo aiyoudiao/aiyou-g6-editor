@@ -30,8 +30,8 @@ export function resizeCanvas() {
   timer = setTimeout(() => {
     const __graph = window.graph
     /* .centerpel-wrapper的元素是画布的父容器，宽高皆为100% */
-    const width = document.querySelector(__selector).clientWidth * 2;
-    const height = document.querySelector(__selector).clientHeight * 2;
+    const width = document.querySelector(__selector).clientWidth;
+    const height = document.querySelector(__selector).clientHeight;
     console.log(
       __this.graph,
       `

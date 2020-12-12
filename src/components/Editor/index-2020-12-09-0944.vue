@@ -94,15 +94,18 @@ import CenterPanel from "../CenterPanel";
 import RightPanel from "../RightPanel";
 import FootBar from "../FootBar";
 import { resizeCanvas, listenCanvasResize } from "@/utils/graph.js";
+import originData from "@/assets/data/FeHelper-20201112134758.json";
 import G6 from "@antv/g6";
 
 /* 注册所有插件：自定义节点、边、行为 */
 import "../../g6-common/plugins";
 
 /* 引入demo数据 */
-import getData from "../../demo/getData6"
+import getData from "../../demo/getData3"
+// import getData from "../../demo/getData4"
 const model = getData()
 
+// console.log('global：', model)
 
 export default {
   name: "BaseFlow",
@@ -157,10 +160,10 @@ export default {
       zoomRatio: 100,
 
       show: {
-        top: false,
-        left: false,
-        bottom: false,
-        right: false,
+        top: true,
+        left: true,
+        bottom: true,
+        right: true,
       },
     };
   },
@@ -184,6 +187,8 @@ export default {
      * @description: 初始化编辑器
      */
     initEditor() {
+      console.log("originData:", originData);
+      const oriData = originData;
       // const data = {
       //   nodes: oriData.nodes,
       //   edges: oriData.edges.map(function(edge, i) {
@@ -202,10 +207,8 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
 
 
        */
-      fetch('https://gw.alipayobjects.com/os/bmw-prod/f1565312-d537-4231-adf5-81cb1cd3a0e8.json')
-  .then((res) => res.json())
-  .then((data) => {
-      // const data = model.graphData
+
+      const data = model.graphData
 
       const grid = new G6.Grid();
       const minimap = new G6.Minimap({
@@ -281,7 +284,7 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
         //   workerEnabled: true,
         //   gpuEnabled: true,
         // },
-        animate: true,
+        // animate: true,
 
         modes: {
           default: ["zoom-canvas", "drag-canvas",'drag-combo', 'drag-node'],
@@ -295,7 +298,6 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
       graph.render();
       listenCanvasResize(window, ".centerpel-wrapper");
       this.initEvents();
-  })
     },
 
     /**
@@ -311,11 +313,11 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
       };
 
       graph.on('node:dragstart', e => {
-        graph.layout()
+        // graph.layout()
         refreshDragedNodePosition(e)
       })
       graph.on('node:drag', e => {
-        graph.layout()
+        // raph.layout()
         // forceLayout.execute()
         refreshDragedNodePosition(e)
       })
