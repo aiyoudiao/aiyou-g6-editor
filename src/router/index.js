@@ -7,9 +7,36 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    name: "Home",
-    component: Home
-  }
+    redirect: '/editor/chart-list'
+  },
+  {
+    path: "",
+    redirect: '/editor/chart-list'
+  },
+  {
+      name: 'editor',
+      path: '/editor',
+      component: Home,
+      children: [
+        {
+          name: 'editor-chart-list',
+          path: 'chart-list',
+          component: () => import('../views/Editor/chart-list.vue'),
+          meta: {
+            title: '可视化列表',
+          },
+        },
+        {
+          name: 'editor-chart',
+          path: 'chart',
+          component: () => import('../views/Editor/chart.vue'),
+          meta: {
+            title: '可视化展示',
+          },
+        },
+
+      ],
+    },
   // {
   //   path: "/about",
   //   name: "About",

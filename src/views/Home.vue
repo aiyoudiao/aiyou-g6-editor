@@ -1,6 +1,6 @@
 <template>
   <div class="aiyou-editor">
-    <editor></editor>
+    <router-view></router-view>
   </div>
 </template>
 

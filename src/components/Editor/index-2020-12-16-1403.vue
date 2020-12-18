@@ -40,7 +40,7 @@
               opacity: show.left ? 1 : 0,
             }"
             v-show="show.left"
-            :nodeLevel="data.nodeLevel"
+            :data="data"
           ></LeftPanel>
         </transition>
         <i class="gb-toggle-btn left" @click="handleBtnClick('left')"></i>
@@ -48,7 +48,7 @@
       <div class="center-panel" :style="{ width: centerWidth }">
         <CenterPanel :data="data"></CenterPanel>
       </div>
-      <div class="right-panel">
+      <!-- <div class="right-panel">
         <transition
           name="animated"
           enter-active-class="animate__animated animate__zoomIn"
@@ -64,7 +64,7 @@
           ></RightPanel>
         </transition>
         <i class="gb-toggle-btn right" @click="handleBtnClick('right')"></i>
-      </div>
+      </div> -->
     </div>
     <div class="bottom-container">
       <transition
@@ -102,7 +102,10 @@ import originData from "@/assets/data/FeHelper-20201112134758.json";
 /* 注册所有插件：自定义节点、边、行为 */
 import "../../g6-common/plugins";
 
-
+/* 引入demo数据 */
+// import getData from "../../demo/getData7";
+import getData from "../../demo/getData8";
+const model = getData();
 
 export default {
   name: "Editor",
@@ -116,17 +119,6 @@ export default {
     CenterPanel,
     RightPanel,
     FootBar,
-  },
-  created() {
-    const { id, title, status, nodeLevel } = this.$route.query;
-    // this.data={
-    //   id,
-    //   title,
-    //   status,
-    //   nodeLevel,
-    // };
-    
-    this.status = status
   },
   computed: {
     /* 动态计算中心画布的宽度 */
@@ -148,7 +140,6 @@ export default {
   },
   data() {
     return {
-      status: null,
       page: null,
       flow: null,
       graph: null,
@@ -217,7 +208,7 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
       //     fetch('https://gw.alipayobjects.com/os/bmw-prod/f1565312-d537-4231-adf5-81cb1cd3a0e8.json')
       // .then((res) => res.json())
       // .then((data) => {
-      const data = window.graphData;
+      const data = model.graphData;
 
       const tooltip = new G6.Tooltip({
         // offsetX and offsetY include the padding of the parent container
@@ -308,7 +299,7 @@ fetch('https://gw.alipayobjects.com/os/basement_prod/0b9730ff-0850-46ff-84d0-1d4
           size: 1,
           color: "#e2e2e2",
         },
-        layout: this.status === 'origin' && {
+        layout: {
           // type: "force",
           type: "gForce",
           center: [800, 800],

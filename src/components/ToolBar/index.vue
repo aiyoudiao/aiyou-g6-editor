@@ -63,6 +63,7 @@
       <i
         data-command="multiSelect"
         class="command iconfont icon-select"
+        @click="handleMultipleSelect"
         title="多选"
       ></i>
       <i
@@ -77,28 +78,62 @@
       ></i>
     </div>
     <div class="operation">
-      <el-button size="mini" type="primary">保存</el-button>
-      <el-button size="mini" type="primary">下载</el-button>
+      <el-button size="mini" type="primary" @click="handleGraphSave"
+        >保存</el-button
+      >
+      <el-button size="mini" type="primary" @click="downloadGraphImg"
+        >下载</el-button
+      >
     </div>
   </div>
 </template>
 
 <script>
+import { download } from "@/utils/tools";
+
 export default {
   name: "ToolBar",
   props: {},
   data() {
     return {
-      show: true
+      show: true,
+      pngName: "graph",
     };
   },
   computed: {},
   watch: {},
-  created() {},
+  created() {
+    const { id, title, status, nodeLevel } = this.$route.query;
+    // this.data={
+    //   id,
+    //   title,
+    //   status,
+    //   nodeLevel,
+    // };
+
+    this.pngName = title;
+  },
   beforeCreate() {},
   mounted() {},
   components: {},
-  methods: {}
+  methods: {
+    handleMultipleSelect() {
+      window.shift = true;
+    },
+    /* 处理图数据保存 */
+    handleGraphSave() {
+      const graph = window.graph;
+      const data = graph.save();
+      download(this.pngName + ".json", JSON.stringify(data));
+      console.log("data：", data);
+    },
+    /* 下载关系图的图片 */
+    downloadGraphImg() {
+      const graph = window.graph;
+
+      graph.downloadImage(this.pngName, "", "#fff");
+    },
+  },
 };
 </script>
 

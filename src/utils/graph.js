@@ -18,7 +18,7 @@ export function listenCanvasResize(target, selector) {
   __this.graph.height = document.querySelector(__selector).clientHeight;
 
   resizeCanvas()
-  window.onresize = resizeCanvas 
+  // window.onresize = resizeCanvas 
 
 }
 
@@ -32,14 +32,14 @@ export function resizeCanvas() {
     /* .centerpel-wrapper的元素是画布的父容器，宽高皆为100% */
     const width = document.querySelector(__selector).clientWidth;
     const height = document.querySelector(__selector).clientHeight;
-    console.log(
-      __this.graph,
-      `
-            width: ${document.querySelector(__selector).clientWidth}
-            height: ${document.querySelector(__selector).clientHeight}
-          `
-    );
+    // console.log(
+    //   __this.graph,
+    //   `
+    //         width: ${document.querySelector(__selector).clientWidth}
+    //         height: ${document.querySelector(__selector).clientHeight}
+    //       `
+    // );
     __graph.changeSize(width, height);
-    __graph.render()
+    // __graph.render()
   }, 200);
 };

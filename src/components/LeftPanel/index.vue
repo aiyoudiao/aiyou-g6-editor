@@ -26,10 +26,16 @@
               @dragstart="handleDragstart($event, node)"
               @dragend="handleDragend"
             />
+            <p>{{ node.dataLabel }}</p>
           </div>
         </div>
       </el-collapse-item>
     </el-collapse>
+    <!-- 导航器 -->
+    <div class="navigator">
+      <span class="panel-title">导航器</span>
+      <div class="mini-map" id="mini-map" ref="minimap"></div>
+    </div>
   </div>
 </template>
 
@@ -37,19 +43,25 @@
 import nodeModels from "../../data";
 export default {
   name: "",
-  props: {},
+  props: {
+  },
   data() {
     return {
-      activeItems: ["1"],
-      nodeModels: []
+      activeItems: ["3"],
+      nodeModels: [],
     };
   },
   computed: {},
-  watch: {},
+  watch: {
+  },
   created() {},
   beforeCreate() {},
   mounted() {
     this.nodeModels = nodeModels;
+
+    const { nodeLevel } = this.$route.query;
+    this.activeItems = ["" + nodeLevel]
+
   },
   components: {},
   methods: {
@@ -62,8 +74,8 @@ export default {
       } else {
         return false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -91,6 +103,27 @@ export default {
       width: 33.333%;
       display: inline-block;
       vertical-align: middle;
+    }
+  }
+
+  .navigator {
+    width: 100%;
+    // height: 25%;
+    height: 400px;
+    flex-grow: 1;
+    .panel-title {
+      display: block;
+      height: 32px;
+      border-top: 1px solid #dce3e8;
+      border-bottom: 1px solid #dce3e8;
+      background: #ebeef2;
+      color: #000;
+      line-height: 28px;
+      padding-left: 12px;
+    }
+    .mini-map {
+      width: 100%;
+      height: calc(100% - 34px);
     }
   }
 }
