@@ -110,6 +110,11 @@ export default {
       /* 确定数据源 */
       const dataName = this.data.title;
       const key = dataMaps[dataName]
+
+      /**
+       * NOTE: 在这里发送请求，拿到数据
+       * 初始化数据
+       */
       const data = window.chartDataSet[key + "_" + status];
 
       /* 指定相关的策略 */
@@ -135,6 +140,24 @@ export default {
 
       console.log('data', data)
       console.log('window.graphData', window.graphData)
+    },
+
+    /**
+     * 请求获取单个图表数据
+     */
+    async requsetDataList() {
+      const response = await fetch("{url}", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          field1: "value1",
+          field2: "value2",
+        }),
+      });
+      const data = await response.json();
+      console.log("data:", data);
     },
   },
 };
